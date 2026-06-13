@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "410384916277",
+    "project_id": "worksphere-778f7",
+    "storage_bucket": "worksphere-778f7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:410384916277:android:6785312e90a2f736aa767c",
+        "android_client_info": {
+          "package_name": "com.greythr"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXHNW4EE2a6RMC3gnh7c_YAwVYRAP6VUI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
