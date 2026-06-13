@@ -5,6 +5,7 @@ const auth = () => {
     return (
         <View>
             <Text>auth</Text>
+            <Text>Kunal code</Text>
         </View>
     )
 }
