@@ -1,14 +1,23 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import './src/gesture-handler.native';
+import React from 'react';
+import { StatusBar } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { AuthProvider } from './src/Context/AuthContext';
+import { AppProvider } from './src/Context/AppContext';
+import AppNavigation from './src/navigation/index';
+import { COLORS } from './src/Constants/colors';
 
 const App = () => {
   return (
-    <View>
-      <Text>Hello, World!</Text>
-      <Text>Hello, World!</Text>
-      <Text>Rushank changes</Text>
-    </View>
-  )
-}
+    <AuthProvider>
+      <AppProvider>
+        <NavigationContainer>
+          <StatusBar barStyle="light-content" backgroundColor={COLORS.background} />
+          <AppNavigation />
+        </NavigationContainer>
+      </AppProvider>
+    </AuthProvider>
+  );
+};
 
-export default App
+export default App;
