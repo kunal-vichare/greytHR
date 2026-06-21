@@ -1,10 +1,10 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useSelector, useDispatch } from 'react-redux';
 import { COLORS } from '../../Constants/colors';
 import { STRINGS } from '../../Constants/strings';
-import { AuthContext } from '../../Context/AuthContext';
-import { AppContext } from '../../Context/AppContext';
+import { clockIn, clockOut, selectEmployeePerformance } from '../../redux/slices/appSlice';
 import { Header } from '../../components/Header';
 import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
@@ -12,16 +12,14 @@ import { ProgressBar, ProgressRingPlaceholder } from '../../components/Chart';
 
 export const DashboardScreen = () => {
   const navigation = useNavigation();
-  const { currentUser } = useContext(AuthContext);
-  const { 
-    announcements, 
-    leaveBalances, 
-    activeCheckIn, 
-    clockIn, 
-    clockOut, 
-    getEmployeePerformance,
-    employees
-  } = useContext(AppContext);
+  const dispatch = useDispatch();
+
+  const currentUser = useSelector((state) => state.auth.currentUser);
+  const employees = useSelector((state) => state.auth.employees);
+  
+  const announcements = useSelector((state) => state.app.announcements);
+  const leaveBalances = useSelector((state) => state.app.leaveBalances);
+  const activeCheckIn = useSelector((state) => state.app.activeCheckIn);
 
   const isAdmin = currentUser?.role === 'admin';
   const userId = currentUser?.id;
@@ -29,21 +27,27 @@ export const DashboardScreen = () => {
   const totalLeaveLeft = userBalances.casual + userBalances.sick + userBalances.earned;
 
   const isClockedIn = !!activeCheckIn[userId];
-  const performance = getEmployeePerformance(userId || 'EMP-202');
+  const performance = selectEmployeePerformance(userId || 'EMP-202');
 
   const handleClockToggle = () => {
     if (isClockedIn) {
-      const result = clockOut(userId);
-      if (result.success) {
-        Alert.alert('Checked Out', `${STRINGS.checkOutSuccess} ${result.log.checkOut}. Duration: ${result.log.duration}`);
-      }
+      dispatch(clockOut(userId))
+        .unwrap()
+        .then((payload) => {
+          Alert.alert('Checked Out', `${STRINGS.checkOutSuccess} ${payload.newLog.checkOut}. Duration: ${payload.newLog.duration}`);
+        })
+        .catch((error) => {
+          Alert.alert('Error', error);
+        });
     } else {
-      const result = clockIn(userId);
-      if (result.success) {
-        Alert.alert('Checked In', `${STRINGS.checkInSuccess} ${result.checkInTime}`);
-      } else {
-        Alert.alert('Error', result.error);
-      }
+      dispatch(clockIn(userId))
+        .unwrap()
+        .then((payload) => {
+          Alert.alert('Checked In', `${STRINGS.checkInSuccess} ${payload.checkInTime}`);
+        })
+        .catch((error) => {
+          Alert.alert('Error', error);
+        });
     }
   };
 

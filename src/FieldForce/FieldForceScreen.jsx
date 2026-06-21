@@ -1,9 +1,9 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View, Text, ScrollView, Alert, FlatList, TouchableOpacity } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
 import { COLORS } from '../Constants/colors';
 import { STRINGS } from '../Constants/strings';
-import { AppContext } from '../Context/AppContext';
-import { AuthContext } from '../Context/AuthContext';
+import { logFieldCheckpointThunk } from '../redux/slices/appSlice';
 import { Header } from '../components/Header';
 import { Card } from '../components/Card';
 import { Button } from '../components/Button';
@@ -15,8 +15,9 @@ const SITES = [
 ];
 
 export const FieldForceScreen = () => {
-  const { currentUser } = useContext(AuthContext);
-  const { fieldForceLogs, logFieldCheckpoint } = useContext(AppContext);
+  const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.auth.currentUser);
+  const fieldForceLogs = useSelector((state) => state.app.fieldForceLogs);
 
   const userId = currentUser?.id;
   const isAdmin = currentUser?.role === 'admin';
@@ -29,13 +30,14 @@ export const FieldForceScreen = () => {
   const [selectedSite, setSelectedSite] = useState(SITES[0]);
 
   const handleLogCheckpoint = () => {
-    const result = logFieldCheckpoint(userId, selectedSite.name, selectedSite.coords);
-    if (result.success) {
-      Alert.alert(
-        'Success',
-        `Site attendance registered at:\n${selectedSite.name}\n\nCoordinates: ${selectedSite.coords}`
-      );
-    }
+    dispatch(logFieldCheckpointThunk({ userId, checkpoint: selectedSite.name, coords: selectedSite.coords }))
+      .unwrap()
+      .then(() => {
+        Alert.alert(
+          'Success',
+          `Site attendance registered at:\n${selectedSite.name}\n\nCoordinates: ${selectedSite.coords}`
+        );
+      });
   };
 
   const renderLogItem = ({ item }) => {

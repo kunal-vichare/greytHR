@@ -1,15 +1,16 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useDispatch } from 'react-redux';
 import { COLORS } from '../../Constants/colors';
 import { STRINGS } from '../../Constants/strings';
-import { AuthContext } from '../../Context/AuthContext';
+import { registerCompany } from '../../redux/slices/authSlice';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
 
 export const CompanyRegisterScreen = () => {
   const navigation = useNavigation();
-  const { registerCompany } = useContext(AuthContext);
+  const dispatch = useDispatch();
 
   const [companyName, setCompanyName] = useState('');
   const [ownerName, setOwnerName] = useState('');
@@ -50,21 +51,23 @@ export const CompanyRegisterScreen = () => {
 
   const handleRegister = () => {
     if (validate()) {
-      const result = registerCompany(companyName, ownerName, email, password);
-      if (result.success) {
-        Alert.alert(
-          'Registration Successful!',
-          `Workspace for "${companyName}" has been created.\n\nYour Workspace Company ID is: ${result.companyId}\n\nEmployees must use this ID to register under your company.`,
-          [
-            {
-              text: 'Go to Login',
-              onPress: () => navigation.navigate('Login'),
-            },
-          ]
-        );
-      } else {
-        Alert.alert('Registration Failed', result.error);
-      }
+      dispatch(registerCompany({ companyName, ownerName, email, password }))
+        .unwrap()
+        .then((payload) => {
+          Alert.alert(
+            'Registration Successful!',
+            `Workspace for "${companyName}" has been created.\n\nYour Workspace Company ID is: ${payload.id}\n\nEmployees must use this ID to register under your company.`,
+            [
+              {
+                text: 'Go to Login',
+                onPress: () => navigation.navigate('Login'),
+              },
+            ]
+          );
+        })
+        .catch((error) => {
+          Alert.alert('Registration Failed', error);
+        });
     }
   };
 

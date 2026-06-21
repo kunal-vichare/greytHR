@@ -1,16 +1,16 @@
-import React, { useContext } from 'react';
-import { AuthContext } from '../Context/AuthContext';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import AuthNavigator from './auth';
 import MainNavigator from './mainStack';
 
 export const AppNavigation = () => {
-  const { currentUser } = useContext(AuthContext);
+  const currentUser = useSelector((state) => state.auth.currentUser);
 
   if (!currentUser) {
-    return <AuthNavigator />;
+    return <AuthNavigator />
   }
 
-  return <MainNavigator />;
+  return <MainNavigator />
 };
 
 export default AppNavigation;

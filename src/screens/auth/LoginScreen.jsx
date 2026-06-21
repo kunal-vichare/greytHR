@@ -1,17 +1,18 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useDispatch } from 'react-redux';
 import { COLORS } from '../../Constants/colors';
 import { STRINGS } from '../../Constants/strings';
-import { AuthContext } from '../../Context/AuthContext';
+import { login } from '../../redux/slices/authSlice';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
 
 export const LoginScreen = () => {
   const navigation = useNavigation();
-  const { login } = useContext(AuthContext);
+  const dispatch = useDispatch();
 
-  const [role, setRole] = useState('employee'); // 'employee' or 'admin'
+  const [role, setRole] = useState('employee');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
@@ -42,12 +43,14 @@ export const LoginScreen = () => {
 
   const handleLogin = () => {
     if (validate()) {
-      const result = login(email, password, role);
-      if (result.success) {
-        // Logged in! AppNavigation index will auto-redirect because state changes
-      } else {
-        Alert.alert('Authentication Failed', result.error || STRINGS.authFailed);
-      }
+      dispatch(login({ email, password, role }))
+        .unwrap()
+        .then(() => {
+          // Logged in! AppNavigation index will auto-redirect because state changes
+        })
+        .catch((error) => {
+          Alert.alert('Authentication Failed', error || STRINGS.authFailed);
+        });
     }
   };
 

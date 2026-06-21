@@ -1,12 +1,18 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useSelector, useDispatch } from 'react-redux';
 import { COLORS } from '../Constants/colors';
-import { AuthContext } from '../Context/AuthContext';
+import { logout } from '../redux/slices/authSlice';
 
 export const Header = ({ title, showBack = false, rightElement }) => {
   const navigation = useNavigation();
-  const { logout, currentUser } = useContext(AuthContext);
+  const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.auth.currentUser);
+
+  const handleLogout = () => {
+    dispatch(logout());
+  };
 
   const handleBack = () => {
     if (navigation.canGoBack()) {
@@ -31,7 +37,7 @@ export const Header = ({ title, showBack = false, rightElement }) => {
         {rightElement ? (
           rightElement
         ) : currentUser ? (
-          <TouchableOpacity onPress={logout} style={styles.logoutButton} activeOpacity={0.7}>
+          <TouchableOpacity onPress={handleLogout} style={styles.logoutButton} activeOpacity={0.7}>
             <Text style={styles.logoutText}>Logout</Text>
           </TouchableOpacity>
         ) : null}

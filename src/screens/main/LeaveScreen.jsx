@@ -1,22 +1,19 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View, Text, ScrollView, Alert, FlatList, TouchableOpacity } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
 import { COLORS } from '../../Constants/colors';
 import { STRINGS } from '../../Constants/strings';
-import { AppContext } from '../../Context/AppContext';
-import { AuthContext } from '../../Context/AuthContext';
+import { applyLeave, updateLeaveStatus } from '../../redux/slices/appSlice';
 import { Header } from '../../components/Header';
 import { Card } from '../../components/Card';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
 
 export const LeaveScreen = () => {
-  const { currentUser } = useContext(AuthContext);
-  const { 
-    leaveBalances, 
-    leaveApplications, 
-    applyLeave, 
-    updateLeaveStatus 
-  } = useContext(AppContext);
+  const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.auth.currentUser);
+  const leaveBalances = useSelector((state) => state.app.leaveBalances);
+  const leaveApplications = useSelector((state) => state.app.leaveApplications);
 
   const userId = currentUser?.id;
   const isAdmin = currentUser?.role === 'admin';
@@ -66,35 +63,42 @@ export const LeaveScreen = () => {
 
   const handleApply = () => {
     if (validate()) {
-      const result = applyLeave(
+      dispatch(applyLeave({
         userId,
-        currentUser.name,
+        employeeName: currentUser.name,
         leaveType,
         startDate,
         endDate,
         reason
-      );
-
-      if (result.success) {
-        Alert.alert('Success', STRINGS.leaveAppliedSuccess);
-        setStartDate('');
-        setEndDate('');
-        setReason('');
-        setErrors({});
-      } else {
-        Alert.alert('Application Failed', result.error);
-      }
+      }))
+        .unwrap()
+        .then(() => {
+          Alert.alert('Success', STRINGS.leaveAppliedSuccess);
+          setStartDate('');
+          setEndDate('');
+          setReason('');
+          setErrors({});
+        })
+        .catch((error) => {
+          Alert.alert('Application Failed', error);
+        });
     }
   };
 
   const handleApprove = (id) => {
-    updateLeaveStatus(id, 'Approved');
-    Alert.alert('Approved', 'Leave request has been approved.');
+    dispatch(updateLeaveStatus({ applicationId: id, status: 'Approved' }))
+      .unwrap()
+      .then(() => {
+        Alert.alert('Approved', 'Leave request has been approved.');
+      });
   };
 
   const handleReject = (id) => {
-    updateLeaveStatus(id, 'Rejected');
-    Alert.alert('Rejected', 'Leave request has been rejected.');
+    dispatch(updateLeaveStatus({ applicationId: id, status: 'Rejected' }))
+      .unwrap()
+      .then(() => {
+        Alert.alert('Rejected', 'Leave request has been rejected.');
+      });
   };
 
   const getStatusStyle = (status) => {

@@ -1,15 +1,16 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useDispatch } from 'react-redux';
 import { COLORS } from '../../Constants/colors';
 import { STRINGS } from '../../Constants/strings';
-import { AuthContext } from '../../Context/AuthContext';
+import { registerEmployee } from '../../redux/slices/authSlice';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
 
 export const EmployeeRegisterScreen = () => {
   const navigation = useNavigation();
-  const { registerEmployee } = useContext(AuthContext);
+  const dispatch = useDispatch();
 
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -55,21 +56,23 @@ export const EmployeeRegisterScreen = () => {
 
   const handleRegister = () => {
     if (validate()) {
-      const result = registerEmployee(fullName, email, password, companyId, designation);
-      if (result.success) {
-        Alert.alert(
-          'Registration Successful!',
-          `You have registered under workspace ID: ${companyId.toUpperCase()}.\n\nYou can now sign in to your dashboard.`,
-          [
-            {
-              text: 'Go to Login',
-              onPress: () => navigation.navigate('Login'),
-            },
-          ]
-        );
-      } else {
-        Alert.alert('Registration Failed', result.error);
-      }
+      dispatch(registerEmployee({ fullName, email, password, companyId, designation }))
+        .unwrap()
+        .then(() => {
+          Alert.alert(
+            'Registration Successful!',
+            `You have registered under workspace ID: ${companyId.toUpperCase()}.\n\nYou can now sign in to your dashboard.`,
+            [
+              {
+                text: 'Go to Login',
+                onPress: () => navigation.navigate('Login'),
+              },
+            ]
+          );
+        })
+        .catch((error) => {
+          Alert.alert('Registration Failed', error);
+        });
     }
   };
 

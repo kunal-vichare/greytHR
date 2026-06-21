@@ -1,17 +1,19 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { StyleSheet, View, Text, ScrollView, Alert, FlatList } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
 import { COLORS } from '../../Constants/colors';
 import { STRINGS } from '../../Constants/strings';
-import { AppContext } from '../../Context/AppContext';
-import { AuthContext } from '../../Context/AuthContext';
+import { clockIn, clockOut, selectEmployeePerformance } from '../../redux/slices/appSlice';
 import { Header } from '../../components/Header';
 import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
 import { BarChart } from '../../components/Chart';
 
 export const AttendanceScreen = () => {
-  const { currentUser } = useContext(AuthContext);
-  const { attendanceLogs, activeCheckIn, clockIn, clockOut, getEmployeePerformance } = useContext(AppContext);
+  const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.auth.currentUser);
+  const attendanceLogs = useSelector((state) => state.app.attendanceLogs);
+  const activeCheckIn = useSelector((state) => state.app.activeCheckIn);
 
   const userId = currentUser?.id;
   const isAdmin = currentUser?.role === 'admin';
@@ -22,7 +24,7 @@ export const AttendanceScreen = () => {
     : attendanceLogs.filter(log => log.userId === userId);
 
   const isClockedIn = !!activeCheckIn[userId];
-  const performance = getEmployeePerformance(userId || 'EMP-202');
+  const performance = selectEmployeePerformance(userId || 'EMP-202');
 
   const chartData = performance.weeklyTrend.map(item => ({
     label: item.day,
@@ -31,17 +33,23 @@ export const AttendanceScreen = () => {
 
   const handleClockToggle = () => {
     if (isClockedIn) {
-      const result = clockOut(userId);
-      if (result.success) {
-        Alert.alert('Checked Out', `${STRINGS.checkOutSuccess} ${result.log.checkOut}.`);
-      }
+      dispatch(clockOut(userId))
+        .unwrap()
+        .then((payload) => {
+          Alert.alert('Checked Out', `${STRINGS.checkOutSuccess} ${payload.newLog.checkOut}.`);
+        })
+        .catch((error) => {
+          Alert.alert('Error', error);
+        });
     } else {
-      const result = clockIn(userId);
-      if (result.success) {
-        Alert.alert('Checked In', `${STRINGS.checkInSuccess} ${result.checkInTime}`);
-      } else {
-        Alert.alert('Error', result.error);
-      }
+      dispatch(clockIn(userId))
+        .unwrap()
+        .then((payload) => {
+          Alert.alert('Checked In', `${STRINGS.checkInSuccess} ${payload.checkInTime}`);
+        })
+        .catch((error) => {
+          Alert.alert('Error', error);
+        });
     }
   };
 

@@ -1,9 +1,9 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View, Text, ScrollView, Alert, TouchableOpacity } from 'react-native';
+import { useSelector } from 'react-redux';
 import { COLORS } from '../../Constants/colors';
 import { STRINGS } from '../../Constants/strings';
-import { AppContext } from '../../Context/AppContext';
-import { AuthContext } from '../../Context/AuthContext';
+import { selectEmployeePerformance } from '../../redux/slices/appSlice';
 import { Header } from '../../components/Header';
 import { Card } from '../../components/Card';
 import { Input } from '../../components/Input';
@@ -11,14 +11,14 @@ import { Button } from '../../components/Button';
 import { ProgressBar } from '../../components/Chart';
 
 export const PerformanceScreen = () => {
-  const { currentUser } = useContext(AuthContext);
-  const { getEmployeePerformance, employees } = useContext(AppContext);
+  const currentUser = useSelector((state) => state.auth.currentUser);
+  const employees = useSelector((state) => state.auth.employees);
 
   const isAdmin = currentUser?.role === 'admin';
   const userId = currentUser?.id;
 
-  // Admin select employee state
-  // const companyEmployees = employees?.filter(e => e.companyId === currentUser?.companyId);
+  // Filter employees belonging to the same company
+  const companyEmployees = employees?.filter(e => e.companyId === currentUser?.companyId) || [];
   const [selectedEmp, setSelectedEmp] = useState(companyEmployees[0] || null);
 
   // Manager feedback input
@@ -26,7 +26,7 @@ export const PerformanceScreen = () => {
   const [submittedFeedback, setSubmittedFeedback] = useState({}); // empId -> feedback
 
   const currentEmpId = isAdmin ? (selectedEmp?.id || 'EMP-202') : userId;
-  const performance = getEmployeePerformance(currentEmpId);
+  const performance = selectEmployeePerformance(currentEmpId);
 
   const handleSubmitFeedback = () => {
     if (!feedbackText.trim()) {

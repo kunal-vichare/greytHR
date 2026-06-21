@@ -1,17 +1,18 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View, Text, ScrollView, Alert, FlatList } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
 import { COLORS } from '../../Constants/colors';
 import { STRINGS } from '../../Constants/strings';
-import { AppContext } from '../../Context/AppContext';
-import { AuthContext } from '../../Context/AuthContext';
+import { addAnnouncementThunk } from '../../redux/slices/appSlice';
 import { Header } from '../../components/Header';
 import { Card } from '../../components/Card';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
 
 export const AnnouncementsScreen = () => {
-  const { currentUser } = useContext(AuthContext);
-  const { announcements, addAnnouncement } = useContext(AppContext);
+  const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.auth.currentUser);
+  const announcements = useSelector((state) => state.app.announcements);
 
   const isAdmin = currentUser?.role === 'admin';
 
@@ -39,11 +40,14 @@ export const AnnouncementsScreen = () => {
 
   const handleBroadcast = () => {
     if (validate()) {
-      addAnnouncement(title, content, `${currentUser.name} (Admin)`);
-      Alert.alert('Broadcast Sent', 'Announcement published on noticeboard.');
-      setTitle('');
-      setContent('');
-      setErrors({});
+      dispatch(addAnnouncementThunk({ title, content, postedBy: `${currentUser.name} (Admin)` }))
+        .unwrap()
+        .then(() => {
+          Alert.alert('Broadcast Sent', 'Announcement published on noticeboard.');
+          setTitle('');
+          setContent('');
+          setErrors({});
+        });
     }
   };
 
