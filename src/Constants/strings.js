@@ -1,5 +1,5 @@
 export const STRINGS = {
-  appName: 'CoPortal',
+  appName: 'WorkSphere',
   appSubtitle: 'Corporate & Government HR Portal',
 
   // Auth Screens
@@ -16,6 +16,7 @@ export const STRINGS = {
   companyIdPlaceholder: 'Enter Company ID (e.g. CO-101)',
   companyNameLabel: 'Company Name',
   companyNamePlaceholder: 'Enter Company Name',
+  ownerFullName: 'Owner full name',
   emailLabel: 'Email Address',
   emailPlaceholder: 'Enter email (e.g. john@company.com)',
   passwordLabel: 'Password',
@@ -27,7 +28,8 @@ export const STRINGS = {
   // Dashboard / Home
   dashboardTitle: 'Dashboard',
   welcomeBack: 'Welcome back,',
-  adminBadge: 'Company Owner',
+  roleEmployee:'Employee',
+  adminBadge: 'Admin',
   employeeBadge: 'Employee',
   activeEmployees: 'Active Employees',
   companyCodeText: 'Workspace ID:',

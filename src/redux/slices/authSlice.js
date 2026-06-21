@@ -4,9 +4,9 @@ const DEMO_COMPANIES = [
   {
     id: 'CO-101',
     name: 'TechGov Solutions',
-    ownerEmail: 'admin@techgov.com',
+    ownerEmail: 'kunal@gmail.com',
     ownerName: 'Sarah Jenkins',
-    password: 'password123',
+    password: 'kunal9',
   }
 ];
 
@@ -14,8 +14,8 @@ const DEMO_EMPLOYEES = [
   {
     id: 'EMP-202',
     name: 'Kunal Vichare',
-    email: 'kunal@techgov.com',
-    password: 'password123',
+    email: 'kunal@gmail.com',
+    password: 'kunal9',
     companyId: 'CO-101',
     designation: 'Senior Developer',
     role: 'employee',
@@ -25,7 +25,7 @@ const DEMO_EMPLOYEES = [
     id: 'EMP-203',
     name: 'Priya Sharma',
     email: 'priya@techgov.com',
-    password: 'password123',
+    password: 'kunal',
     companyId: 'CO-101',
     designation: 'UI/UX Designer',
     role: 'employee',

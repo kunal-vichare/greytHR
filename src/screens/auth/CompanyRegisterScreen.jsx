@@ -88,7 +88,7 @@ export const CompanyRegisterScreen = () => {
         />
         <Input
           label={STRINGS.fullNameLabel}
-          placeholder="Owner full name"
+          placeholder={STRINGS.ownerFullName}
           value={ownerName}
           onChangeText={setOwnerName}
           error={errors.ownerName}

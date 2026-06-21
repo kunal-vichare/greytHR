@@ -9,7 +9,7 @@ export const store = configureStore({
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: false, // Turn off for simpler thunk callback/payloads if any
+      serializableCheck: false,
     }),
 });
 

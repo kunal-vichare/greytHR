@@ -17,6 +17,11 @@ export const LoginScreen = () => {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
 
+  const roles = [
+    { key: 'employee', label: STRINGS.roleEmployee },
+    { key: 'admin', label: STRINGS.adminBadge },
+  ];
+
   const validate = () => {
     let valid = true;
     let tempErrors = {};
@@ -73,30 +78,26 @@ export const LoginScreen = () => {
       <View style={styles.roleContainer}>
         <Text style={styles.roleLabel}>{STRINGS.selectRole}</Text>
         <View style={styles.roleTabs}>
-          <TouchableOpacity
-            style={[styles.roleTab, role === 'employee' ? styles.activeTab : null]}
-            onPress={() => {
-              setRole('employee');
-              setErrors({});
-            }}
-            activeOpacity={0.8}
-          >
-            <Text style={[styles.roleTabText, role === 'employee' ? styles.activeTabText : null]}>
-              {STRINGS.roleEmployee}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.roleTab, role === 'admin' ? styles.activeTab : null]}
-            onPress={() => {
-              setRole('admin');
-              setErrors({});
-            }}
-            activeOpacity={0.8}
-          >
-            <Text style={[styles.roleTabText, role === 'admin' ? styles.activeTabText : null]}>
-              {STRINGS.adminBadge}
-            </Text>
-          </TouchableOpacity>
+          {roles.map(({ key, label }) => (
+            <TouchableOpacity
+              key={key}
+              style={[styles.roleTab, role === key && styles.activeTab]}
+              onPress={() => {
+                setRole(key);
+                setErrors({});
+              }}
+              activeOpacity={0.8}
+            >
+              <Text
+                style={[
+                  styles.roleTabText,
+                  role === key && styles.activeTabText,
+                ]}
+              >
+                {label}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </View>
       </View>
 
