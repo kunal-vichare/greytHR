@@ -7,7 +7,9 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "storybook:ios": "cross-env STORYBOOK_ENABLED=true react-native run-ios",
+    "storybook:android": "cross-env STORYBOOK_ENABLED=true react-native run-android"
   },
   "dependencies": {
     "@notifee/react-native": "^9.1.8",
@@ -22,7 +24,21 @@
     "react-native-gesture-handler": "^3.0.1",
     "react-native-safe-area-context": "^5.5.2",
     "react-native-screens": "^4.25.2",
-    "react-redux": "^9.3.0"
+    "react-redux": "^9.3.0",
+    "@react-native-async-storage/async-storage": "latest",
+    "@react-native-community/datetimepicker": "latest",
+    "@react-native-community/slider": "latest",
+    "react-native-reanimated": "latest",
+    "react-native-worklets": "latest",
+    "@gorhom/bottom-sheet": "latest",
+    "react-native-svg": "latest",
+    "cross-env": "latest",
+    "@storybook/addon-ondevice-controls": "latest",
+    "@storybook/addon-ondevice-actions": "latest",
+    "@storybook/react-native": "latest",
+    "@storybook/react-native-ui-lite": "latest",
+    "storybook": "^10.6.1",
+    "react-dom": "19.2.3"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
