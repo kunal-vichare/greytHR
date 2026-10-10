@@ -1,12 +1,11 @@
 import './src/gesture-handler.native';
 import React, { useEffect } from 'react';
-import { Alert, StatusBar } from 'react-native';
+import { Alert, StatusBar, PermissionsAndroid, Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { Provider } from 'react-redux';
 import { store } from './src/redux/store';
 import AppNavigation from './src/navigation/index';
 import { COLORS } from './src/Constants/colors';
-import { PermissionsAndroid } from 'react-native';
 import { getMessaging, onMessage, registerDeviceForRemoteMessages, getToken as getFCMToken } from '@react-native-firebase/messaging';
 import notifee from '@notifee/react-native';
 
@@ -34,7 +33,9 @@ const App = () => {
   };
 
   useEffect(() => {
-    requestPermissionAndroid();
+    if (Platform.OS === 'android') {
+      requestPermissionAndroid();
+    }
   }, []);
 
   useEffect(() => {
